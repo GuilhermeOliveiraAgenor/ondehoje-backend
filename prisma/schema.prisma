@@ -1,0 +1,635 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  birthDate DateTime  @map("birth_date")
+  provider  String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  createdAddresses Address[] @relation("CreatedByRelation")
+  updatedAddresses Address[] @relation("UpdatedByRelation")
+
+  createdCompanies Company[] @relation("CreatedByRelation")
+  updatedCompanies Company[] @relation("UpdatedByRelation")
+
+  createdCategories Category[] @relation("CreatedByRelation")
+  updatedCategories Category[] @relation("UpdatedByRelation")
+
+  createdEvents Event[] @relation("CreatedByRelation")
+  updatedEvents Event[] @relation("UpdatedByRelation")
+  deletedEvents Event[] @relation("DeletedByRelation")
+
+  createdInformations Information[] @relation("CreatedByRelation")
+  updatedInformations Information[] @relation("UpdatedByRelation")
+  deletedInformations Information[] @relation("DeletedByRelation")
+
+  userImages UserImage[]
+
+  createdSubscriptions Subscription[]     @relation("CreatedByRelation")
+  updatedSubscriptions Subscription[]     @relation("UpdatedByRelation")
+  subscriptionsHist    SubscriptionHist[]
+
+  favorites Favorite[]
+
+  createdParameters Parameter[] @relation("CreatedByRelation")
+  updatedParameters Parameter[] @relation("UpdatedByRelation")
+
+  createdAdvertisements Advertisement[] @relation("CreatedByRelation")
+  updatedAdvertisements Advertisement[] @relation("UpdatedByRelation")
+  deletedAdvertisements Advertisement[] @relation("DeletedByRelation")
+
+  advertisementAuthorizations AdvertisementAuthorization[]
+
+  identityRoles IdentityRole[]
+  notifications Notification[]
+
+  createdDocuments Document[] @relation("CreatedByRelation")
+  updatedDocuments Document[] @relation("UpdatedByRelation")
+
+  createdDocumentTypes DocumentType[] @relation("CreatedByRelation")
+  updatedDocumentTypes DocumentType[] @relation("UpdatedByRelation")
+
+  createdCoupons  Coupon[] @relation("CreatedByRelation")
+  updatedCoupons  Coupon[] @relation("UpdatedByRelation")
+  deledtedCoupons Coupon[] @relation("DeletedByRelation")
+
+  userCoupons UserCoupon[]
+
+  @@index([id])
+  @@index([name])
+  @@index([provider])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("users")
+}
+
+model Role {
+  id   String @id @default(uuid())
+  name String @unique
+
+  identityRoles   IdentityRole[]
+  rolePermissions RolePermission[]
+
+  @@index([name])
+  @@map("roles")
+}
+
+model Permission {
+  id     String @id @default(uuid())
+  action String
+  entity String
+
+  rolePermissions RolePermission[]
+
+  @@unique([action, entity])
+  @@index([action])
+  @@index([entity])
+  @@index([action, entity])
+  @@map("permissions")
+}
+
+model IdentityRole {
+  identityId String @map("identity_id")
+  identity   User   @relation(fields: [identityId], references: [id])
+
+  roleId String @map("role_id")
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@id([identityId, roleId])
+  @@index([identityId])
+  @@index([roleId])
+  @@map("identities_roles")
+}
+
+model RolePermission {
+  roleId String @map("role_id")
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  permissionId String     @map("permission_id")
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("roles_permissions")
+}
+
+model Address {
+  id           String  @id @default(uuid())
+  street       String
+  complement   String?
+  neighborhood String
+  number       String
+  cep          String
+  city         String
+  state        String
+  latitude     Decimal
+  longitude    Decimal
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  companies Company[]
+  events    Event[]
+
+  @@index([street, complement, number, cep])
+  @@index([latitude, longitude])
+  @@map("addresses")
+}
+
+model Company {
+  id String @id @default(uuid())
+
+  addressId String  @map("address_id")
+  address   Address @relation(fields: [addressId], references: [id])
+
+  name       String
+  slug       String @unique
+  socialName String @map("social_name")
+  status     String
+  document   String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  companyDocuments CompanyDocument[]
+  events           Event[]
+  informations     Information[]
+  companyImages    CompanyImage[]
+  subscriptions    Subscription[]
+  favorites        Favorite[]
+  advertisements   Advertisement[]
+
+  @@index([name])
+  @@index([status])
+  @@map("companies")
+}
+
+model DocumentType {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  documents Document[]
+
+  @@index([name])
+  @@index([description])
+  @@map("document_types")
+}
+
+model Document {
+  id String @id @default(uuid())
+
+  documentTypeId String       @map("document_type_id")
+  documentType   DocumentType @relation(fields: [documentTypeId], references: [id])
+
+  file        String
+  name        String
+  description String?
+  expiresAt   DateTime? @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  companyDocuments CompanyDocument[]
+
+  @@index([documentTypeId])
+  @@index([name])
+  @@index([file])
+  @@index([expiresAt])
+  @@map("documents")
+}
+
+model CompanyDocument {
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id])
+
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id])
+
+  @@id([companyId, documentId])
+  @@index([companyId])
+  @@index([documentId])
+  @@map("company_documents")
+}
+
+model Category {
+  id          String @id @default(uuid())
+  name        String @unique
+  description String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  events Event[]
+
+  @@map("categories")
+}
+
+model Event {
+  id String @id @default(uuid())
+
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id])
+
+  addressId String  @map("address_id")
+  address   Address @relation(fields: [addressId], references: [id])
+
+  categoryId String   @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  name        String
+  slug        String
+  description String?
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy String?   @map("deleted_by")
+  deleter   User?     @relation("DeletedByRelation", fields: [deletedBy], references: [id])
+
+  informations   Information[]
+  eventImages    EventImage[]
+  favorites      Favorite[]
+  advertisements Advertisement[]
+  coupons        Coupon[]
+
+  @@unique([companyId, slug])
+  @@index([categoryId])
+  @@index([name])
+  @@index([slug])
+  @@index([startDate, endDate])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([deletedAt])
+  @@map("events")
+}
+
+model Information {
+  id String @id @default(uuid())
+
+  companyId String?  @map("company_id")
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  eventId String? @map("event_id")
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  name        String
+  description String?
+  phoneNumber String? @map("phone_number")
+  email       String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy String?   @map("deleted_by")
+  deleter   User?     @relation("DeletedByRelation", fields: [deletedBy], references: [id])
+
+  @@index([companyId])
+  @@index([eventId])
+  @@map("informations")
+}
+
+model Image {
+  id        String   @id @default(uuid())
+  url       String
+  alt       String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  eventImages   EventImage[]
+  companyImages CompanyImage[]
+  userImages    UserImage[]
+
+  @@map("images")
+}
+
+model EventImage {
+  eventId String @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id])
+
+  imageId String @map("image_id")
+  image   Image  @relation(fields: [imageId], references: [id], onUpdate: NoAction, onDelete: Cascade)
+
+  @@id([eventId, imageId])
+  @@index([eventId])
+  @@index([imageId])
+  @@map("event_images")
+}
+
+model CompanyImage {
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id])
+
+  imageId String @map("image_id")
+  image   Image  @relation(fields: [imageId], references: [id], onUpdate: NoAction, onDelete: Cascade)
+
+  @@id([companyId, imageId])
+  @@index([companyId])
+  @@index([imageId])
+  @@map("company_images")
+}
+
+model UserImage {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  imageId String @map("image_id")
+  image   Image  @relation(fields: [imageId], references: [id], onUpdate: NoAction, onDelete: Cascade)
+
+  @@id([userId, imageId])
+  @@index([userId])
+  @@index([imageId])
+  @@map("user_images")
+}
+
+model Subscription {
+  id String @id @default(uuid())
+
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id])
+
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+  status    String
+  amount    Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String   @map("updated_by")
+  updater   User?    @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  payments Payment[]
+
+  @@unique([companyId])
+  @@index([companyId])
+  @@index([startDate, endDate])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("subscriptions")
+}
+
+model SubscriptionHist {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+  status    String
+  amount    Int
+  createdAt DateTime @map("created_at")
+  createdBy String   @map("created_by")
+  updatedAt DateTime @map("updated_at")
+  updatedBy String   @map("updated_by")
+  deletedAt DateTime @map("deleted_at")
+  deletedBy String   @map("deleted_by")
+  deleter   User     @relation(fields: [deletedBy], references: [id])
+
+  @@index([companyId])
+  @@index([startDate, endDate])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("subscriptions_hist")
+}
+
+model Favorite {
+  id String @id @default(uuid())
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  eventId String? @map("event_id")
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  companyId String?  @map("company_id")
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([companyId])
+  @@map("favorites")
+}
+
+model Parameter {
+  id      String  @id @default(uuid())
+  key     String  @unique
+  keyInfo String  @map("key_info")
+  value   String
+  type    String
+  status  Boolean
+  visible Boolean
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  @@map("parameters")
+}
+
+model Advertisement {
+  id String @id @default(uuid())
+
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id])
+
+  eventId String? @map("event_id")
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  description    String
+  days           Int
+  amount         Int
+  clicks         Int
+  insights       Int
+  status         String
+  expirationDate DateTime @map("expiration_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy String?   @map("deleted_by")
+  deleter   User?     @relation("DeletedByRelation", fields: [deletedBy], references: [id])
+
+  advertisementAuthorizations AdvertisementAuthorization[]
+  payments                    Payment[]
+
+  @@index([companyId])
+  @@index([eventId])
+  @@index([status])
+  @@index([expirationDate])
+  @@index([updatedAt])
+  @@map("advertisements")
+}
+
+model AdvertisementAuthorization {
+  id String @id @default(uuid())
+
+  advertisementId String        @map("advertisement_id")
+  advertisement   Advertisement @relation(fields: [advertisementId], references: [id])
+  status          String
+
+  decidedAt  DateTime @map("decided_at")
+  decidedBy  String   @map("decided_by")
+  authorizer User     @relation(fields: [decidedBy], references: [id])
+
+  rejectedReason String? @map("rejected_reason")
+
+  @@index([advertisementId])
+  @@map("advertisement_authorizations")
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  subscriptionId String?       @map("subscription_id")
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  advertisementId String?        @map("advertisement_id")
+  advertisement   Advertisement? @relation(fields: [advertisementId], references: [id])
+
+  gateway          String?
+  checkoutId       String?   @map("checkout_id")
+  amount           Int
+  tax              Int?
+  status           String
+  link             String?
+  method           String?
+  pixData          String?   @map("pix_data")
+  finalCard        String?   @map("final_card")
+  confirmationDate DateTime? @map("confirmation_date")
+  expiresAt        DateTime  @map("expires_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime? @map("updated_at")
+
+  @@unique([gateway, checkoutId])
+  @@index([subscriptionId])
+  @@index([advertisementId])
+  @@index([gateway, checkoutId])
+  @@map("payments")
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  recipientId String @map("recipient_id")
+  recipient   User   @relation(fields: [recipientId], references: [id])
+
+  title     String
+  content   String
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map("notifications")
+}
+
+model Coupon {
+  id String @id @default(uuid())
+
+  eventId String @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id])
+
+  name        String
+  description String
+  expiresAt   DateTime @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String   @map("created_by")
+  creator   User     @relation("CreatedByRelation", fields: [createdBy], references: [id])
+
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
+  updater   User?     @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  deletedAt   DateTime?    @map("deleted_at")
+  deletedBy   String?      @map("deleted_by")
+  deleter     User?        @relation("DeletedByRelation", fields: [deletedBy], references: [id])
+  userCoupons UserCoupon[]
+
+  @@unique([name, eventId])
+  @@index([name])
+  @@index([eventId])
+  @@map("coupons")
+}
+
+model UserCoupon {
+  id String @id @default(uuid())
+
+  couponId String @map("coupon_id")
+  coupon   Coupon @relation(fields: [couponId], references: [id])
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  hash      String
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@unique([couponId, userId])
+  @@index([couponId])
+  @@map("user_coupons")
+}

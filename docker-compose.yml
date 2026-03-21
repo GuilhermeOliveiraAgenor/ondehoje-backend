@@ -1,0 +1,22 @@
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: ondehoje_postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: ondehoje
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - ondehoje_network
+  
+volumes:
+  postgres_data:
+
+networks:
+  ondehoje_network:
+    driver: bridge
+
