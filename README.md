@@ -2,7 +2,7 @@
 
 ## 📌 About
 
-O Onde Hoje é uma API desenvolvida como parte de um Trabalho de Conclusão de Curso (TCC), com foco em conectar usuários a eventos e estabelecimentos de entretenimento de forma inteligente, utilizando filtros, categorias e geolocalização.
+O Onde Hoje é uma API desenvolvida com foco em conectar usuários a eventos e estabelecimentos de entretenimento de forma inteligente, utilizando filtros, categorias e geolocalização.
 
 A aplicação permite que usuários encontrem opções próximas com base na sua localização, enquanto empresas podem divulgar seus eventos e estabelecimentos dentro da plataforma.
 
@@ -10,10 +10,15 @@ A arquitetura foi projetada seguindo princípios de Clean Architecture e DDD (Do
 
 💡 A monetização é realizada através de planos de divulgação pagos, integrados com Stripe, funcionando como sustentação da plataforma.
 
-📄 Documentação completa do TCC (50+ páginas):
+📄 Documentação completa (50+ páginas):
 <br>
 👉 [Ver documento](https://drive.google.com/file/d/1AV04oNaKpU44M1bavN1ACDR9V1wlY6sS/view?usp=sharing)
 
+## 👨‍💻 Desenvolvimento
+
+Este projeto foi desenvolvido em equipe como parte de um **Trabalho de Conclusão de Curso (TCC)**, contando com a participação de **5 integrantes**. O desenvolvimento foi estruturado com divisão de responsabilidades por etapas, envolvendo desde a arquitetura e modelagem do sistema até a implementação do backend, frontend, integrações externas e realização de testes e validações.
+
+A gestão do projeto foi conduzida utilizando o **Jira**, permitindo a organização das tarefas, acompanhamento do progresso e definição de prioridades ao longo do desenvolvimento, sempre com foco em uma abordagem colaborativa entre os membros da equipe.
 
 ## ⚙️ Features
 
@@ -28,8 +33,8 @@ A arquitetura foi projetada seguindo princípios de Clean Architecture e DDD (Do
 
 ### 💳 Pagamentos
 - Integração com Stripe
-Cobrança para divulgação de anúncios
-Email com link de pagamento
+- Cobrança para divulgação de anúncios
+- Email com link de pagamento
 
 ### 🏢 Área do Assinante
 - Cadastro e edição de eventos e estabelecimentos
@@ -182,6 +187,61 @@ Organiza e registra dependências da aplicação utilizando injeção de depend�
   providers: [CreateEventUseCase],
 })
 export class HttpEventModule {}
+```
+
+## ▶️ Run
+
+### 1️⃣ Clone o repositório
+```
+git clone https://github.com/GuilhermeOliveiraAgenor/ondehoje-backend.git
+cd ondehoje-backend
+```
+
+### 2️⃣ Instalar dependências
+
+```
+npm install
+```
+
+### 3️⃣ Configurar variáveis de ambiente
+Utilize o `.env.example` como base para configurar o arquivo `.env`.
+```
+cp .env.example .env
+```
+
+### 4️⃣ Subir serviços no Docker (PostgreSQL e Redis)
+```
+docker compose up -d
+```
+
+### 5️⃣ Executar migrations do banco de dados
+```
+npx prisma generate
+npx prisma migrate dev
+```
+
+### 6️⃣ Executar seed
+```
+npm run seed
+```
+
+### 7️⃣ Iniciar o servidor
+```
+npm run start
+```
+
+## 🧪 Testes
+
+### Executar testes unitários
+
+```
+npm run test
+```
+
+### Executar testes E2E
+
+```
+npm run test:e2e
 ```
 
 
