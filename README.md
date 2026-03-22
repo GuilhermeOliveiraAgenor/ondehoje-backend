@@ -2,9 +2,9 @@
 
 ## 📌 About
 
-O Onde Hoje é uma API desenvolvida com foco em conectar usuários a eventos e estabelecimentos de entretenimento de forma inteligente, utilizando filtros, categorias e geolocalização. A aplicação permite que usuários encontrem opções próximas com base na sua localização, enquanto empresas podem divulgar seus eventos e estabelecimentos dentro da plataforma. 
+O Onde Hoje é uma API desenvolvida com foco em conectar usuários a **eventos e estabelecimentos** de entretenimento de forma inteligente, utilizando filtros, categorias e **geolocalização**. A aplicação permite que usuários encontrem opções próximas com base na sua localização, enquanto empresas podem divulgar seus eventos e estabelecimentos dentro da plataforma. 
 
-A arquitetura foi projetada seguindo os princípios de Clean Architecture e DDD (Domain-Driven Design), garantindo escalabilidade, organização e facilidade de manutenção.
+A arquitetura foi projetada seguindo os princípios de **Clean Architecture** e **DDD** (Domain-Driven Design), garantindo escalabilidade, organização e facilidade de manutenção.
 
 A aplicação foi desenvolvida utilizando tecnologias modernas como **Node.js** com **NestJS**, **Prisma ORM** para acesso a dados, **Passport** para autenticação do Google, além de **Zod** para validação de dados.
 
@@ -18,7 +18,7 @@ Também conta com integrações como **Stripe** para pagamentos e **Nodemailer**
 
 ## 👨‍💻 Desenvolvimento
 
-Este projeto foi desenvolvido em equipe como parte de um **Trabalho de Conclusão de Curso (TCC)**, contando com a participação de **5 integrantes**. O desenvolvimento foi estruturado com divisão de responsabilidades por etapas, envolvendo desde a arquitetura e modelagem do sistema até a implementação do backend, frontend, integrações externas e realização de testes e validações.
+Este projeto foi desenvolvido em equipe como parte de um **Trabalho de Conclusão de Curso (TCC)**, contando com a participação de **5 integrantes**. O desenvolvimento foi estruturado com **divisão** de responsabilidades por etapas, envolvendo desde a arquitetura e modelagem do sistema até a implementação do backend, frontend, **integrações externas** e realização de testes e validações.
 
 A gestão do projeto foi conduzida utilizando o **Jira**, permitindo a organização das tarefas, acompanhamento do progresso e definição de prioridades ao longo do desenvolvimento, sempre com foco em uma abordagem colaborativa entre os membros da equipe.
 
@@ -246,4 +246,9 @@ npm run test
 npm run test:e2e
 ```
 
+## 📌 Observação
+
+Este projeto foi originalmente desenvolvido em um repositório privado durante o TCC e posteriormente publicado neste repositório.
+
+📄 A documentação completa do projeto está disponível acima e detalha toda a construção da aplicação.
 
