@@ -45,6 +45,7 @@ describe('Create Category Controller (e2e)', () => {
         description: 'Categoria de bares e pubs',
       })
 
+    console.log(response)
     expect(response.statusCode).toBe(201)
 
     const categoryOnDatabase = await prisma.category.findUnique({
