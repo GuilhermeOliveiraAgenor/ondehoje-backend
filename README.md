@@ -207,11 +207,12 @@ npm install
 
 ### 3️⃣ Configurar variáveis de ambiente
 Utilize o `.env.example` como base para configurar o arquivo `.env`.
+
 ```
 cp .env.example .env
 ```
 
-### 4️⃣ Subir serviços no Docker (PostgreSQL e Redis)
+### 4️⃣ Subir serviços no Docker
 ```
 docker compose up -d
 ```
